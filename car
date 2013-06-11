@@ -1,0 +1,47 @@
+#!/usr/bin/python
+
+import argparse
+import os
+import re
+import shutil
+import sys
+
+def parseArgs():
+    parser = argparse.ArgumentParser()
+    parser.add_argument(
+        'fromDir',
+        help = 'Directory from which to copy the contents to.',
+    )
+    parser.add_argument(
+        'toDir',
+        help = 'Director to which to copy the contents to.',
+    )
+    parser.add_argument(
+        '--replace',
+        nargs = '?',
+        help = 'Regex string to replace',
+    )
+    parser.add_argument(
+        '--withName',
+        nargs = '?',
+        help = 'string to replace with',
+        default = '',
+    )
+    args = parser.parse_args()
+    return args
+
+def main():
+    args = parseArgs()
+    all_items = os.listdir(args.fromDir)
+    for item in all_items:
+        new_item = ''
+        if args.replace and args.withName:
+            new_item = re.sub(args.replace, args.withName, item)
+            original = os.path.join(args.fromDir, item)
+            replacement = os.path.join(args.toDir, new_item)
+            print "Copying {0} to {1}".format(original, replacement)
+            shutil.copy2(original, replacement)
+    pass
+
+if __name__ == '__main__':
+    main()
